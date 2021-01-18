@@ -1,5 +1,5 @@
 {
-    "name": "tolkam/routing-invokable-handler",
+    "name": "tolkam/routing-invokable-runner",
     "description": "Support for route handlers invokable by php-di/invoker",
     "type": "library",
     "license": "proprietary",

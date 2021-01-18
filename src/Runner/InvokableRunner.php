@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Tolkam\Routing\Runner\Handler;
+namespace Tolkam\Routing\Runner;
 
 use Invoker\InvokerInterface;
 use Psr\Container\ContainerInterface;
@@ -16,9 +16,9 @@ class InvokableRunner implements HandlerRunnerInterface
     use AssertionsTrait;
     
     /**
-     * @var ContainerInterface
+     * @var InvokerInterface
      */
-    protected ContainerInterface $container;
+    protected InvokerInterface $container;
     
     /**
      * @param ContainerInterface $container
@@ -40,16 +40,24 @@ class InvokableRunner implements HandlerRunnerInterface
      */
     public function process(
         ServerRequestInterface $request,
-        RequestHandlerInterface $requestHandler
+        RequestHandlerInterface $handler
     ): ResponseInterface {
         
-        if (is_callable($this->routeHandler)) {
+        if (is_array($this->routeHandler)) {
+            [$class, $method] = $this->routeHandler;
+            $isCallable = method_exists((string) $class, (string) $method);
+        }
+        else {
+            $isCallable = is_callable($this->routeHandler);
+        }
+        
+        if ($isCallable) {
             $response = $this->container->call($this->routeHandler, [$request]);
             $this->assertValidResponse($response, $this->routeName);
             
             return $response;
         }
         
-        return $requestHandler->handle($request);
+        return $handler->handle($request);
     }
 }
