@@ -1,10 +1,15 @@
 {
     "name": "tolkam/routing-invokable-runner",
-    "description": "Support for route handlers invokable by php-di/invoker",
+    "description": "Support for tolkam/routing route handlers invokable by php-di/invoker",
     "type": "library",
     "license": "proprietary",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "Kanstantsin Kulesh",
+            "email": "kk@tolkam.com",
+            "homepage": "https://www.tolkam.com"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Tolkam\\Routing\\": "src"
@@ -12,12 +17,7 @@
     },
     "require": {
         "php": ">=7.4",
-        "tolkam/routing": "^1.0@dev",
+        "tolkam/routing": "^1.0",
         "php-di/invoker": "^2.0"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0-dev"
-        }
     }
 }
