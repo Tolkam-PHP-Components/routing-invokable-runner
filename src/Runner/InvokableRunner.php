@@ -7,34 +7,32 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Tolkam\Routing\Traits\AssertionsTrait;
-use Tolkam\Routing\Traits\RouteHandlerAwareTrait;
 
-class InvokableRunner implements HandlerRunnerInterface
+class InvokableRunner implements RunnerInterface
 {
     use RouteHandlerAwareTrait;
     use AssertionsTrait;
-    
+
     /**
      * @var InvokerInterface
      */
     protected InvokerInterface $container;
-    
+
     /**
      * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
     {
         if (!$container instanceof InvokerInterface) {
-            throw new HandlerRunnerException(sprintf(
+            throw new RunnerException(sprintf(
                 'Container must implement %s (ex. PHP-DI).',
                 InvokerInterface::class
             ));
         }
-        
+
         $this->container = $container;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -42,7 +40,7 @@ class InvokableRunner implements HandlerRunnerInterface
         ServerRequestInterface $request,
         RequestHandlerInterface $handler
     ): ResponseInterface {
-        
+
         if (is_array($this->routeHandler)) {
             [$class, $method] = $this->routeHandler;
             $isCallable = method_exists((string) $class, (string) $method);
@@ -50,14 +48,14 @@ class InvokableRunner implements HandlerRunnerInterface
         else {
             $isCallable = is_callable($this->routeHandler);
         }
-        
+
         if ($isCallable) {
             $response = $this->container->call($this->routeHandler, [$request]);
             $this->assertValidResponse($response, $this->routeName);
-            
+
             return $response;
         }
-        
+
         return $handler->handle($request);
     }
 }
